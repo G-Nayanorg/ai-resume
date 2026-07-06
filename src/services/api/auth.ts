@@ -20,7 +20,7 @@ export const authApi = {
     apiClient<RegisterTenantResponse>(URLS.authregistertenant, {
       method: "POST",
       body,
-      headers: bootstrapToken ? { "X-Bootstrap-Token": bootstrapToken } : {},
+      // headers: bootstrapToken ? { "X-Bootstrap-Token": bootstrapToken } : {},
     }),
 
   me: () => apiClient<UserOut>(URLS.authprofile),

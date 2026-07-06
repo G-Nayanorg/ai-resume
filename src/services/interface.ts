@@ -24,13 +24,19 @@ export interface LoginRequest {
 export interface LoginResponse {
   access_token: string;
   refresh_token: string;
-  user: UserOut;
+  token_type: string;
+  expires_in: number;
+  user_id: UUID;
+  tenant_id: UUID | null;
+  role: string;
 }
 
 export interface RegisterTenantRequest {
   tenant_name: string;
+  tenant_slug: string;
   admin_email: string;
-  admin_password?: string;
+  admin_full_name: string;
+  password?: string;
 }
 
 export interface RegisterTenantResponse {

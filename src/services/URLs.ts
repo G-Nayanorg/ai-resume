@@ -5,7 +5,7 @@ const URLS = {
   authrefresh: "/api/v1/auth/refresh",
   authlogout: "/api/v1/auth/logout",
   authprofile: "/api/v1/auth/me",
-  authregistertenant: "/api/v1/auth/register-tenant",
+  authregistertenant: "/api/v1/admin/tenants",
 
   // Candidates
   candidatefetch: "/api/v1/candidates",

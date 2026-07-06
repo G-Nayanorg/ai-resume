@@ -1,7 +1,7 @@
 
 import { useAuthStore } from "@/features/auth/authStore";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
+const BASE_URL = process.env.NEXT_PUBLIC_backendurl || process.env.NEXT_PUBLIC_API_URL || "";
 
 interface RequestOptions extends Omit<RequestInit, "body"> {
   params?: Record<string, string | number | boolean | string[] | undefined | null>;
@@ -9,7 +9,7 @@ interface RequestOptions extends Omit<RequestInit, "body"> {
 }
 
 export async function apiClient<T>(
-  endpoint: string,
+  endpoint: string, 
   { params, ...customConfig }: RequestOptions = {}
 ): Promise<T> {
   const token = useAuthStore.getState().token;
@@ -44,6 +44,12 @@ export async function apiClient<T>(
   };
 
   let url = `${BASE_URL}${endpoint}`;
+  // Normalize slashes (prevent double slashes, ignoring the scheme)
+  url = url.replace(/([^:]+)\/\/+/g, "$1/");
+  // Handle duplicate API route prefix if defined in both base URL and endpoint
+  if (url.includes("/api/v1/api/v1/")) {
+    url = url.replace("/api/v1/api/v1/", "/api/v1/");
+  }
   if (params) {
     const searchParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {

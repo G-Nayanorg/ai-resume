@@ -34,16 +34,16 @@ export default function WorkspaceDashboardPage() {
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">Dashboard</h1>
           <p className="text-slate-500">Overview of your active hiring pipelines and recent activity.</p>
         </div>
-        <div className="flex items-center gap-3">
+        {/* <div className="flex items-center gap-3">
           <Button variant="outline" className="gap-2">
             <Upload className="w-4 h-4" />
             Upload Resumes
           </Button>
-          <Button className="gap-2">
+          <Button className="gap-2" >
             <Plus className="w-4 h-4" />
             Create Job
           </Button>
-        </div>
+        </div> */}
       </div>
 
       {/* KPI Stats */}

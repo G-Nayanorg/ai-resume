@@ -7,6 +7,7 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
+import { EyeOff, Eye } from 'lucide-react';
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,7 +27,7 @@ const loginSchema = z.object({
   password: z.string().min(1, { message: "Password is required" }),
 });
 
-export function LoginForm() {
+export default function LoginForm() {
   const router = useRouter();
   const login = useAuthStore((state) => state.login);
   const [error, setError] = useState<string | null>(null);
@@ -39,22 +40,37 @@ export function LoginForm() {
       password: "",
     },
   });
+  const [showPassword, setShowPassword] = useState(false);
 
   async function onSubmit(values: z.infer<typeof loginSchema>) {
     setLoading(true);
     setError(null);
     try {
       const response = await authApi.login(values);
-      // Map UserOut to Store User
+      // Map flat LoginResponse to Store User
       const storeUser: StoreUser = {
-        id: response.user.id,
-        email: response.user.email,
-        name: response.user.full_name || response.user.email,
-        role: response.user.role as StoreUser["role"],
-        tenantId: response.user.tenant_id || undefined,
+        id: response.user_id,
+        email: values.email,
+        name: values.email.split("@")[0],
+        role: response.role as StoreUser["role"],
+        tenantId: response.tenant_id || undefined,
       };
       login(storeUser, response.access_token);
-      router.push("/app/dashboard");
+
+      switch (storeUser.role) {
+        case "SUPER_ADMIN":
+          router.push("/admin/tenants");
+          break;
+        case "CANDIDATE":
+          router.push("/candidate");
+          break;
+        case "TENANT_ADMIN":
+        case "RECRUITER":
+        case "VIEWER":
+        default:
+          router.push("/recruiter/dashboard");
+          break;
+      }
     } catch (err: unknown) {
       console.error(err);
       const apiError = err as { detail?: string; message?: string };
@@ -69,7 +85,7 @@ export function LoginForm() {
     <div className="bg-white p-8 rounded-xl border border-slate-200 shadow-sm">
       <div className="text-center">
         <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center mx-auto mb-4">
-          <span className="text-white font-bold text-xl">ATS</span>
+          <Link href="/"><span className="text-white font-bold text-xl">ATS</span></Link>
         </div>
         <h2 className="text-2xl font-bold text-slate-900">Sign in to your account</h2>
         <p className="mt-2 text-sm text-slate-500">
@@ -107,14 +123,30 @@ export function LoginForm() {
                     <FormLabel>Password</FormLabel>
                     <Link
                       href="/forgot-password"
-                      className="text-sm font-medium text-primary hover:text-primary/80"
+                      className="text-sm font-medium text-primary hover:text-primary/80 "
                     >
                       Forgot password?
                     </Link>
                   </div>
-                  <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
-                  </FormControl>
+                  <div className="relative">
+                    <FormControl>
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        className="pr-10"
+                        {...field}
+                      />
+                    </FormControl>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      className="absolute right-1.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                    </Button>
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
@@ -138,13 +170,6 @@ export function LoginForm() {
           </Button>
         </form>
       </Form>
-
-      <div className="mt-6 text-center text-sm text-slate-500">
-        Don&apos;t have an account?{" "}
-        <Link href="/register" className="font-medium text-primary hover:text-primary/80">
-          Register your tenant
-        </Link>
-      </div>
     </div>
   );
 }

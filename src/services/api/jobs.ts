@@ -11,7 +11,7 @@ import {
 } from "../interface";
 
 export const jobApi = {
-  list: (params: { page?: number; size?: number; status?: string }) =>
+  getAll: (params: { page?: number; size?: number; status?: string }) =>
     apiClient<PaginatedResponse<JobListItem>>(URLS.jobfetch, { params }),
 
   getById: (job_id: UUID) =>

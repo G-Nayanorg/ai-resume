@@ -99,7 +99,7 @@ export default function Home() {
               Sign in
             </Link>
             <Link
-              href="/app/dashboard"
+              href="/recruiter/dashboard"
               className="inline-flex items-center gap-2 rounded-md bg-white px-4 py-2 text-sm font-bold text-[#07112f] shadow-lg shadow-cyan-950/20 transition hover:bg-cyan-100"
             >
               Launch
@@ -237,7 +237,7 @@ export default function Home() {
               </h2>
             </div>
             <Link
-              href="/app/dashboard"
+              href="/recruiter/dashboard"
               className="inline-flex w-fit items-center gap-2 rounded-md border border-slate-300 px-4 py-2 text-sm font-bold text-slate-800 transition hover:border-teal-700 hover:text-teal-700"
             >
               Open recruiter workspace

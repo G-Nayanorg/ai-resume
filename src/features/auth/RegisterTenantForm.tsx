@@ -23,12 +23,13 @@ import { RegisterTenantRequest } from "@/services/interface";
 
 const registerSchema = z.object({
   tenant_name: z.string().min(2, { message: "Tenant name is required" }),
+  admin_full_name: z.string().min(2, { message: "Admin full name is required" }),
   admin_email: z.string().email({ message: "Invalid email address" }),
   admin_password: z.string().min(8, { message: "Password must be at least 8 characters" }),
-  invite_code: z.string().min(1, { message: "Beta invite code is required" }),
+  invite_code: z.string().optional(),
 });
 
-export function RegisterTenantForm() {
+export default function RegisterTenantForm() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -38,6 +39,7 @@ export function RegisterTenantForm() {
     resolver: zodResolver(registerSchema),
     defaultValues: {
       tenant_name: "",
+      admin_full_name: "",
       admin_email: "",
       admin_password: "",
       invite_code: "",
@@ -47,14 +49,25 @@ export function RegisterTenantForm() {
   async function onSubmit(values: z.infer<typeof registerSchema>) {
     setLoading(true);
     setError(null);
-    const { invite_code, ...rest } = values;
+    const token = values.invite_code || process.env.NEXT_PUBLIC_BOOTSTRAP_TOKEN || "";
+
+    // Auto-generate tenant slug from name
+    const tenant_slug = values.tenant_name
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, "") // remove non-word chars except space and hyphen
+      .replace(/[\s_]+/g, "-")  // replace space and underscore with hyphen
+      .replace(/^-+|-+$/g, ""); // strip leading/trailing hyphens
+
     const requestBody: RegisterTenantRequest = {
-      tenant_name: rest.tenant_name,
-      admin_email: rest.admin_email,
-      admin_password: rest.admin_password,
+      tenant_name: values.tenant_name,
+      tenant_slug,
+      admin_email: values.admin_email,
+      admin_full_name: values.admin_full_name,
+      password: values.admin_password,
     };
     try {
-      await authApi.registerTenant(requestBody, invite_code);
+      await authApi.registerTenant(requestBody, token);
       setSuccess(true);
       setTimeout(() => {
         router.push("/login");
@@ -103,7 +116,7 @@ export function RegisterTenantForm() {
 
   return (
     <div className="bg-white p-8 rounded-xl border border-slate-200 shadow-sm">
-      <div className="text-center">
+      {/* <div className="text-center">
         <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center mx-auto mb-4">
           <span className="text-white font-bold text-xl">ATS</span>
         </div>
@@ -111,10 +124,10 @@ export function RegisterTenantForm() {
         <p className="mt-2 text-sm text-slate-500">
           Start your enterprise resume screening today.
         </p>
-      </div>
+      </div> */}
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {error && (
             <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md border border-destructive/20 text-center">
               {error}
@@ -129,6 +142,19 @@ export function RegisterTenantForm() {
                   <FormLabel>Company / Tenant Name</FormLabel>
                   <FormControl>
                     <Input placeholder="Acme Corp" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="admin_full_name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Admin Full Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="John Doe" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -160,7 +186,7 @@ export function RegisterTenantForm() {
                 </FormItem>
               )}
             />
-            <FormField
+            {/* <FormField
               control={form.control}
               name="invite_code"
               render={({ field }) => (
@@ -172,7 +198,7 @@ export function RegisterTenantForm() {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
           </div>
 
           <Button type="submit" className="w-full h-10" disabled={loading}>
@@ -181,12 +207,12 @@ export function RegisterTenantForm() {
         </form>
       </Form>
 
-      <div className="mt-6 text-center text-sm text-slate-500">
+      {/* <div className="mt-6 text-center text-sm text-slate-500">
         Already have an account?{" "}
         <Link href="/login" className="font-medium text-primary hover:text-primary/80">
           Sign in
         </Link>
-      </div>
+      </div> */}
     </div>
   );
 }

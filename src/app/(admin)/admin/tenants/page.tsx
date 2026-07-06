@@ -1,15 +1,39 @@
+"use client";
+
 import React from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import RegisterTenantForm from '@/features/auth/RegisterTenantForm';
 
 export default function SuperAdminTenantsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-slate-900">Tenants</h1>
-        <button className="bg-primary text-white px-4 py-2 rounded font-medium text-sm hover:bg-primary/90 transition-colors shadow-sm">
-          Create Tenant
-        </button>
+        <Dialog>
+          <DialogTrigger render={
+            <button className="bg-primary text-white px-4 py-2 rounded font-medium text-sm hover:bg-primary/90 transition-colors shadow-sm">
+              Create Tenant
+            </button>
+          } />
+          <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto bg-white p-6 rounded-lg shadow-lg">
+            <DialogHeader className="mb-4">
+              <DialogTitle className="text-xl font-bold">Register New Tenant</DialogTitle>
+              <DialogDescription className="text-sm text-slate-500">
+                Create a new workspace and primary administrator.
+              </DialogDescription>
+            </DialogHeader>
+            <RegisterTenantForm />
+          </DialogContent>
+        </Dialog>
       </div>
-
+    
       <div className="bg-white rounded border border-slate-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
