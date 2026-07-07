@@ -110,10 +110,10 @@ export function AppShell({ children }: AppShellProps) {
             active={pathname.startsWith('/recruiter/jobs')}
           />
           <NavItem
-            href="/app/candidates"
+            href="/recruiter/candidates"
             icon={<Users size={20} />}
             label="Candidates"
-            active={pathname.startsWith('/app/candidates')}
+            active={pathname.startsWith('/recruiter/candidates')}
           />
           <NavItem
             href="/recruiter/resumes"
