@@ -6,6 +6,7 @@ import {
   JobDetail,
   JobListItem,
   JobPatch,
+  JobUploadResponse,
   PaginatedResponse,
   UUID,
 } from "../interface";
@@ -21,6 +22,12 @@ export const jobApi = {
     apiClient<JobDetail>(URLS.jobcreate, {
       method: "POST",
       body,
+    }),
+
+  upload: (formData: FormData) =>
+    apiClient<JobUploadResponse>(URLS.jobUpload, {
+      method: "POST",
+      body: formData,
     }),
 
   patch: (job_id: UUID, body: JobPatch) =>

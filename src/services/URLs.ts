@@ -17,6 +17,7 @@ const URLS = {
   jobfetch: "/api/v1/jobs",
   jobfetchbyid: "/api/v1/jobs/{job_id}",
   jobcreate: "/api/v1/jobs",
+  jobUpload: "/api/v1/jobs/upload",
   jobupdate: "/api/v1/jobs/{job_id}",
   jobdelete: "/api/v1/jobs/{job_id}",
 

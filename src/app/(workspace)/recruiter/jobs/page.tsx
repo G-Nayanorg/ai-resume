@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { 
   Briefcase, 
   Plus, 
+  Upload, 
   Search, 
   AlertCircle, 
   CheckCircle2, 
@@ -30,6 +31,7 @@ import {
 
 // Import reusable job components
 import { JobForm } from "@/features/jobs/components/JobForm";
+import { JobUpload } from "@/features/jobs/components/JobUpload";
 import { JobTable } from "@/features/jobs/components/JobTable";
 import { JobDetailDialog } from "@/features/jobs/components/JobDetailDialog";
 
@@ -51,6 +53,7 @@ export default function Page() {
 
   // Dialog open states
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -72,7 +75,10 @@ export default function Page() {
   };
 
   useEffect(() => {
-    fetchJobs();
+    const loadJobs = async () => {
+      await fetchJobs();
+    };
+    loadJobs();
   }, []);
 
   // Fetch single job details (for Edit / Detail dialogs)
@@ -100,14 +106,14 @@ export default function Page() {
   };
 
   // CRUD handlers
-  const handleCreateSubmit = async (values: any) => {
+  const handleCreateSubmit = async (values: JobCreate) => {
     setIsSubmitting(true);
     try {
-      await jobApi.create(values as JobCreate);
+      await jobApi.create(values);
       showNotification("success", `Job "${values.title}" created successfully.`);
       setIsCreateOpen(false);
       fetchJobs();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       throw err; // throw back to let form handle internal error displays
     } finally {
@@ -115,17 +121,23 @@ export default function Page() {
     }
   };
 
-  const handleEditSubmit = async (values: any) => {
+  const handleUploadSuccess = () => {
+    showNotification("success", "Job description uploaded successfully.");
+    setIsUploadOpen(false);
+    fetchJobs();
+  };
+
+  const handleEditSubmit = async (values: JobPatch) => {
     if (!selectedJob) return;
     setIsSubmitting(true);
     try {
-      await jobApi.patch(selectedJob.id, values as JobPatch);
-      showNotification("success", `Job "${values.title}" updated successfully.`);
+      await jobApi.patch(selectedJob.id, values);
+      showNotification("success", `Job "${values.title ?? selectedJob.title}" updated successfully.`);
       setIsEditOpen(false);
       setSelectedJob(null);
       setDetailedJob(null);
       fetchJobs();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       throw err;
     } finally {
@@ -142,7 +154,7 @@ export default function Page() {
       setIsDeleteOpen(false);
       setSelectedJob(null);
       fetchJobs();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       showNotification("error", "Failed to delete job. Please try again later.");
     } finally {
@@ -223,13 +235,23 @@ export default function Page() {
             Create, update, and manage job openings and automated matching settings.
           </p>
         </div>
-        <Button 
-          className="gap-2 shrink-0 h-10 shadow-sm" 
-          onClick={() => setIsCreateOpen(true)}
-        >
-          <Plus className="w-4 h-4" />
-          Create Job
-        </Button>
+        <div className="flex gap-2 flex-wrap">
+          <Button 
+            variant="outline"
+            className="gap-2 shrink-0 h-10 shadow-sm"
+            onClick={() => setIsUploadOpen(true)}
+          >
+            <Upload className="w-4 h-4" />
+            Upload JD
+          </Button>
+          <Button 
+            className="gap-2 shrink-0 h-10 shadow-sm" 
+            onClick={() => setIsCreateOpen(true)}
+          >
+            <Plus className="w-4 h-4" />
+            Create Job
+          </Button>
+        </div>
       </div>
 
       {/* KPI Stats Summary Card Grid */}
@@ -331,6 +353,21 @@ export default function Page() {
         </DialogContent>
       </Dialog>
 
+      <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
+        <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto bg-white p-6 rounded-lg shadow-lg">
+          <DialogHeader className="mb-4">
+            <DialogTitle className="text-xl font-bold text-slate-900">Upload Job Description</DialogTitle>
+            <DialogDescription className="text-sm text-slate-500">
+              Upload or paste a job description. The system will parse the JD and populate the job details automatically.
+            </DialogDescription>
+          </DialogHeader>
+          <JobUpload 
+            onUploadSuccess={handleUploadSuccess} 
+            onUploadError={(msg) => showNotification("error", msg)}
+          />
+        </DialogContent>
+      </Dialog>
+
       {/* Edit Dialog */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
         <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto bg-white p-6 rounded-lg shadow-lg">
@@ -382,7 +419,7 @@ export default function Page() {
               Confirm Deletion
             </DialogTitle>
             <DialogDescription className="text-sm text-slate-500">
-              Are you sure you want to delete the job post <strong className="text-slate-900">"{selectedJob?.title}"</strong>?
+              Are you sure you want to delete the job post <strong className="text-slate-900">{selectedJob?.title}</strong>?
               This action cannot be undone and will delete all candidate match records associated with this job.
             </DialogDescription>
           </DialogHeader>

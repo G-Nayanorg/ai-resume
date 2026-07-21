@@ -2,7 +2,7 @@
 
 import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, type Resolver } from "react-hook-form";
 import { z } from "zod";
 import { Plus, Trash2, Loader2 } from "lucide-react";
 
@@ -19,14 +19,21 @@ import {
 import { JobDetail, JobCreate, JobSkillIn } from "@/services/interface";
 
 // Validation schema
+const emptyStringToUndefined = (value: unknown) => {
+  if (typeof value === "string" && value.trim() === "") {
+    return undefined;
+  }
+  return value;
+};
+
 const jobSchema = z.object({
-  title: z.string().min(2, { message: "Job title must be at least 2 characters" }),
-  description: z.string().min(10, { message: "Description must be at least 10 characters" }).nullable().optional(),
-  location: z.string().min(2, { message: "Location must be at least 2 characters" }).nullable().optional(),
-  min_experience: z.coerce.number().min(0, { message: "Min experience must be 0 or greater" }).nullable().optional(),
-  max_experience: z.coerce.number().min(0, { message: "Max experience must be 0 or greater" }).nullable().optional(),
-  education_required: z.string().nullable().optional(),
-  status: z.enum(["draft", "active", "closed", "archived"]),
+  title: z.preprocess(emptyStringToUndefined, z.string().min(2, { message: "Job title must be at least 2 characters" }).optional()),
+  description: z.preprocess(emptyStringToUndefined, z.string().min(10, { message: "Description must be at least 10 characters" })),
+  location: z.preprocess(emptyStringToUndefined, z.string().min(2, { message: "Location must be at least 2 characters" }).optional()),
+  min_experience: z.preprocess((value) => (value === "" ? undefined : value), z.coerce.number().min(0, { message: "Min experience must be 0 or greater" }).optional()),
+  max_experience: z.preprocess((value) => (value === "" ? undefined : value), z.coerce.number().min(0, { message: "Max experience must be 0 or greater" }).optional()),
+  education_required: z.preprocess(emptyStringToUndefined, z.string().optional()),
+  status: z.enum(["draft", "active", "closed", "archived"]).optional(),
   skills: z.array(
     z.object({
       skill: z.string().min(1, { message: "Skill name is required" }),
@@ -35,7 +42,7 @@ const jobSchema = z.object({
     })
   ).default([]),
 }).refine((data) => {
-  if (data.min_experience !== null && data.max_experience !== null && data.min_experience !== undefined && data.max_experience !== undefined) {
+  if (data.min_experience !== undefined && data.max_experience !== undefined) {
     return data.max_experience >= data.min_experience;
   }
   return true;
@@ -86,8 +93,8 @@ export function JobForm({ initialData, onSubmit, onCancel }: JobFormProps) {
     };
   }, [initialData]);
 
-  const form = useForm<any>({
-    resolver: zodResolver(jobSchema) as any,
+  const form = useForm<JobFormValues>({
+    resolver: zodResolver(jobSchema) as Resolver<JobFormValues>,
     defaultValues,
   });
 
@@ -125,7 +132,7 @@ export function JobForm({ initialData, onSubmit, onCancel }: JobFormProps) {
             name="title"
             render={({ field }) => (
               <FormItem className="sm:col-span-2">
-                <FormLabel className="text-slate-700 font-medium">Job Title *</FormLabel>
+                <FormLabel className="text-slate-700 font-medium">Job Title</FormLabel>
                 <FormControl>
                   <Input placeholder="e.g. Senior Frontend Engineer" {...field} />
                 </FormControl>
@@ -217,7 +224,7 @@ export function JobForm({ initialData, onSubmit, onCancel }: JobFormProps) {
             name="description"
             render={({ field }) => (
               <FormItem className="sm:col-span-2">
-                <FormLabel className="text-slate-700 font-medium">Job Description</FormLabel>
+                <FormLabel className="text-slate-700 font-medium">Job Description *</FormLabel>
                 <FormControl>
                   <textarea
                     placeholder="Provide details about role responsibilities, perks, and expectations..."
