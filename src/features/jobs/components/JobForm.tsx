@@ -27,7 +27,7 @@ const emptyStringToUndefined = (value: unknown) => {
 };
 
 const jobSchema = z.object({
-  title: z.preprocess(emptyStringToUndefined, z.string().min(2, { message: "Job title must be at least 2 characters" }).optional()),
+  title: z.preprocess(emptyStringToUndefined, z.string().min(2, { message: "Job title must be at least 2 characters" })),
   description: z.preprocess(emptyStringToUndefined, z.string().min(10, { message: "Description must be at least 10 characters" })),
   location: z.preprocess(emptyStringToUndefined, z.string().min(2, { message: "Location must be at least 2 characters" }).optional()),
   min_experience: z.preprocess((value) => (value === "" ? undefined : value), z.coerce.number().min(0, { message: "Min experience must be 0 or greater" }).optional()),
