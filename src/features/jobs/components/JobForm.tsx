@@ -2,11 +2,7 @@
 
 import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-<<<<<<< HEAD
 import { useForm, useFieldArray, type Resolver } from "react-hook-form";
-=======
-import { useForm, useFieldArray } from "react-hook-form";
->>>>>>> 5b748b2badc66457323db053944e2e133d77601f
 import { z } from "zod";
 import { Plus, Trash2, Loader2 } from "lucide-react";
 
@@ -23,7 +19,6 @@ import {
 import { JobDetail, JobCreate, JobSkillIn } from "@/services/interface";
 
 // Validation schema
-<<<<<<< HEAD
 const emptyStringToUndefined = (value: unknown) => {
   if (typeof value === "string" && value.trim() === "") {
     return undefined;
@@ -39,16 +34,6 @@ const jobSchema = z.object({
   max_experience: z.preprocess((value) => (value === "" ? undefined : value), z.coerce.number().min(0, { message: "Max experience must be 0 or greater" }).optional()),
   education_required: z.preprocess(emptyStringToUndefined, z.string().optional()),
   status: z.enum(["draft", "active", "closed", "archived"]).optional(),
-=======
-const jobSchema = z.object({
-  title: z.string().min(2, { message: "Job title must be at least 2 characters" }),
-  description: z.string().min(10, { message: "Description must be at least 10 characters" }).nullable().optional(),
-  location: z.string().min(2, { message: "Location must be at least 2 characters" }).nullable().optional(),
-  min_experience: z.coerce.number().min(0, { message: "Min experience must be 0 or greater" }).nullable().optional(),
-  max_experience: z.coerce.number().min(0, { message: "Max experience must be 0 or greater" }).nullable().optional(),
-  education_required: z.string().nullable().optional(),
-  status: z.enum(["draft", "active", "closed", "archived"]),
->>>>>>> 5b748b2badc66457323db053944e2e133d77601f
   skills: z.array(
     z.object({
       skill: z.string().min(1, { message: "Skill name is required" }),
@@ -57,11 +42,7 @@ const jobSchema = z.object({
     })
   ).default([]),
 }).refine((data) => {
-<<<<<<< HEAD
   if (data.min_experience !== undefined && data.max_experience !== undefined) {
-=======
-  if (data.min_experience !== null && data.max_experience !== null && data.min_experience !== undefined && data.max_experience !== undefined) {
->>>>>>> 5b748b2badc66457323db053944e2e133d77601f
     return data.max_experience >= data.min_experience;
   }
   return true;
@@ -112,13 +93,8 @@ export function JobForm({ initialData, onSubmit, onCancel }: JobFormProps) {
     };
   }, [initialData]);
 
-<<<<<<< HEAD
   const form = useForm<JobFormValues>({
     resolver: zodResolver(jobSchema) as Resolver<JobFormValues>,
-=======
-  const form = useForm<any>({
-    resolver: zodResolver(jobSchema) as any,
->>>>>>> 5b748b2badc66457323db053944e2e133d77601f
     defaultValues,
   });
 
@@ -156,11 +132,7 @@ export function JobForm({ initialData, onSubmit, onCancel }: JobFormProps) {
             name="title"
             render={({ field }) => (
               <FormItem className="sm:col-span-2">
-<<<<<<< HEAD
                 <FormLabel className="text-slate-700 font-medium">Job Title</FormLabel>
-=======
-                <FormLabel className="text-slate-700 font-medium">Job Title *</FormLabel>
->>>>>>> 5b748b2badc66457323db053944e2e133d77601f
                 <FormControl>
                   <Input placeholder="e.g. Senior Frontend Engineer" {...field} />
                 </FormControl>
@@ -252,11 +224,7 @@ export function JobForm({ initialData, onSubmit, onCancel }: JobFormProps) {
             name="description"
             render={({ field }) => (
               <FormItem className="sm:col-span-2">
-<<<<<<< HEAD
                 <FormLabel className="text-slate-700 font-medium">Job Description *</FormLabel>
-=======
-                <FormLabel className="text-slate-700 font-medium">Job Description</FormLabel>
->>>>>>> 5b748b2badc66457323db053944e2e133d77601f
                 <FormControl>
                   <textarea
                     placeholder="Provide details about role responsibilities, perks, and expectations..."

@@ -4,10 +4,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { 
   Briefcase, 
   Plus, 
-<<<<<<< HEAD
   Upload, 
-=======
->>>>>>> 5b748b2badc66457323db053944e2e133d77601f
   Search, 
   AlertCircle, 
   CheckCircle2, 
@@ -34,10 +31,7 @@ import {
 
 // Import reusable job components
 import { JobForm } from "@/features/jobs/components/JobForm";
-<<<<<<< HEAD
 import { JobUpload } from "@/features/jobs/components/JobUpload";
-=======
->>>>>>> 5b748b2badc66457323db053944e2e133d77601f
 import { JobTable } from "@/features/jobs/components/JobTable";
 import { JobDetailDialog } from "@/features/jobs/components/JobDetailDialog";
 
@@ -59,10 +53,7 @@ export default function Page() {
 
   // Dialog open states
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-<<<<<<< HEAD
   const [isUploadOpen, setIsUploadOpen] = useState(false);
-=======
->>>>>>> 5b748b2badc66457323db053944e2e133d77601f
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -84,14 +75,10 @@ export default function Page() {
   };
 
   useEffect(() => {
-<<<<<<< HEAD
     const loadJobs = async () => {
       await fetchJobs();
     };
     loadJobs();
-=======
-    fetchJobs();
->>>>>>> 5b748b2badc66457323db053944e2e133d77601f
   }, []);
 
   // Fetch single job details (for Edit / Detail dialogs)
@@ -119,7 +106,6 @@ export default function Page() {
   };
 
   // CRUD handlers
-<<<<<<< HEAD
   const handleCreateSubmit = async (values: JobCreate) => {
     setIsSubmitting(true);
     try {
@@ -128,16 +114,6 @@ export default function Page() {
       setIsCreateOpen(false);
       fetchJobs();
     } catch (err: unknown) {
-=======
-  const handleCreateSubmit = async (values: any) => {
-    setIsSubmitting(true);
-    try {
-      await jobApi.create(values as JobCreate);
-      showNotification("success", `Job "${values.title}" created successfully.`);
-      setIsCreateOpen(false);
-      fetchJobs();
-    } catch (err: any) {
->>>>>>> 5b748b2badc66457323db053944e2e133d77601f
       console.error(err);
       throw err; // throw back to let form handle internal error displays
     } finally {
@@ -145,7 +121,6 @@ export default function Page() {
     }
   };
 
-<<<<<<< HEAD
   const handleUploadSuccess = () => {
     showNotification("success", "Job description uploaded successfully.");
     setIsUploadOpen(false);
@@ -158,23 +133,11 @@ export default function Page() {
     try {
       await jobApi.patch(selectedJob.id, values);
       showNotification("success", `Job "${values.title ?? selectedJob.title}" updated successfully.`);
-=======
-  const handleEditSubmit = async (values: any) => {
-    if (!selectedJob) return;
-    setIsSubmitting(true);
-    try {
-      await jobApi.patch(selectedJob.id, values as JobPatch);
-      showNotification("success", `Job "${values.title}" updated successfully.`);
->>>>>>> 5b748b2badc66457323db053944e2e133d77601f
       setIsEditOpen(false);
       setSelectedJob(null);
       setDetailedJob(null);
       fetchJobs();
-<<<<<<< HEAD
     } catch (err: unknown) {
-=======
-    } catch (err: any) {
->>>>>>> 5b748b2badc66457323db053944e2e133d77601f
       console.error(err);
       throw err;
     } finally {
@@ -191,11 +154,7 @@ export default function Page() {
       setIsDeleteOpen(false);
       setSelectedJob(null);
       fetchJobs();
-<<<<<<< HEAD
     } catch (err: unknown) {
-=======
-    } catch (err: any) {
->>>>>>> 5b748b2badc66457323db053944e2e133d77601f
       console.error(err);
       showNotification("error", "Failed to delete job. Please try again later.");
     } finally {
@@ -276,7 +235,6 @@ export default function Page() {
             Create, update, and manage job openings and automated matching settings.
           </p>
         </div>
-<<<<<<< HEAD
         <div className="flex gap-2 flex-wrap">
           <Button 
             variant="outline"
@@ -294,15 +252,6 @@ export default function Page() {
             Create Job
           </Button>
         </div>
-=======
-        <Button 
-          className="gap-2 shrink-0 h-10 shadow-sm" 
-          onClick={() => setIsCreateOpen(true)}
-        >
-          <Plus className="w-4 h-4" />
-          Create Job
-        </Button>
->>>>>>> 5b748b2badc66457323db053944e2e133d77601f
       </div>
 
       {/* KPI Stats Summary Card Grid */}
@@ -404,7 +353,6 @@ export default function Page() {
         </DialogContent>
       </Dialog>
 
-<<<<<<< HEAD
       <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
         <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto bg-white p-6 rounded-lg shadow-lg">
           <DialogHeader className="mb-4">
@@ -420,8 +368,6 @@ export default function Page() {
         </DialogContent>
       </Dialog>
 
-=======
->>>>>>> 5b748b2badc66457323db053944e2e133d77601f
       {/* Edit Dialog */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
         <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto bg-white p-6 rounded-lg shadow-lg">
@@ -473,11 +419,7 @@ export default function Page() {
               Confirm Deletion
             </DialogTitle>
             <DialogDescription className="text-sm text-slate-500">
-<<<<<<< HEAD
               Are you sure you want to delete the job post <strong className="text-slate-900">{selectedJob?.title}</strong>?
-=======
-              Are you sure you want to delete the job post <strong className="text-slate-900">"{selectedJob?.title}"</strong>?
->>>>>>> 5b748b2badc66457323db053944e2e133d77601f
               This action cannot be undone and will delete all candidate match records associated with this job.
             </DialogDescription>
           </DialogHeader>

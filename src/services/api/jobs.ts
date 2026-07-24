@@ -6,10 +6,7 @@ import {
   JobDetail,
   JobListItem,
   JobPatch,
-<<<<<<< HEAD
   JobUploadResponse,
-=======
->>>>>>> 5b748b2badc66457323db053944e2e133d77601f
   PaginatedResponse,
   UUID,
 } from "../interface";
@@ -27,15 +24,12 @@ export const jobApi = {
       body,
     }),
 
-<<<<<<< HEAD
   upload: (formData: FormData) =>
     apiClient<JobUploadResponse>(URLS.jobUpload, {
       method: "POST",
       body: formData,
     }),
 
-=======
->>>>>>> 5b748b2badc66457323db053944e2e133d77601f
   patch: (job_id: UUID, body: JobPatch) =>
     apiClient<JobDetail>(URLS.jobupdate.replace("{job_id}", job_id), {
       method: "PATCH",
