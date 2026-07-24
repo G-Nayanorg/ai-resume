@@ -106,11 +106,11 @@ export default function Page() {
   };
 
   // CRUD handlers
-  const handleCreateSubmit = async (values: JobCreate) => {
+  const handleCreateSubmit = async (values: Partial<JobCreate>) => {
     setIsSubmitting(true);
     try {
-      await jobApi.create(values);
-      showNotification("success", `Job "${values.title}" created successfully.`);
+      await jobApi.create(values as JobCreate);
+      showNotification("success", `Job "${values.title ?? 'Untitled'}" created successfully.`);
       setIsCreateOpen(false);
       fetchJobs();
     } catch (err: unknown) {

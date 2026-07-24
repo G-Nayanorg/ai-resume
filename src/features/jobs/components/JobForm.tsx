@@ -27,7 +27,7 @@ const emptyStringToUndefined = (value: unknown) => {
 };
 
 const jobSchema = z.object({
-  title: z.preprocess(emptyStringToUndefined, z.string().min(2, { message: "Job title must be at least 2 characters" })),
+  title: z.preprocess(emptyStringToUndefined, z.string().min(2, { message: "Job title must be at least 2 characters" }).optional()),
   description: z.preprocess(emptyStringToUndefined, z.string().min(10, { message: "Description must be at least 10 characters" })),
   location: z.preprocess(emptyStringToUndefined, z.string().min(2, { message: "Location must be at least 2 characters" }).optional()),
   min_experience: z.preprocess((value) => (value === "" ? undefined : value), z.coerce.number().min(0, { message: "Min experience must be 0 or greater" }).optional()),
@@ -50,6 +50,9 @@ const jobSchema = z.object({
   message: "Max experience cannot be less than min experience",
   path: ["max_experience"],
 });
+
+// No conditional rules: description is required; other fields remain optional
+const conditionalJobSchema = jobSchema;
 
 type JobFormValues = z.infer<typeof jobSchema>;
 
@@ -94,7 +97,7 @@ export function JobForm({ initialData, onSubmit, onCancel }: JobFormProps) {
   }, [initialData]);
 
   const form = useForm<JobFormValues>({
-    resolver: zodResolver(jobSchema) as Resolver<JobFormValues>,
+    resolver: zodResolver(conditionalJobSchema) as Resolver<JobFormValues>,
     defaultValues,
   });
 
