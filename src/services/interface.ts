@@ -187,6 +187,7 @@ export interface JobCreate {
   skills?: JobSkillIn[];
 }
 
+<<<<<<< HEAD
 export interface JobUploadResponse {
   id: UUID;
   status: string;
@@ -195,6 +196,8 @@ export interface JobUploadResponse {
   created_at: string;
 }
 
+=======
+>>>>>>> 5b748b2badc66457323db053944e2e133d77601f
 export type JobPatch = Partial<JobCreate>;
 
 // --- Resumes ---
